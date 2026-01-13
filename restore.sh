@@ -81,6 +81,38 @@ defaults write com.apple.dock show-recents -bool false
 defaults write NSGlobalDomain NSTextPlacementSmartQuotesEnabled -bool false
 defaults write CGDisableCursorLocationMagnification -bool YES
 
+echo "--- PHASE 10: Nuking Keyboard 'Intelligence' & Autocorrect ---"
+
+# Disable auto-correct (The "Fixed it for you" annoyance)
+defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
+
+# Disable smart quotes and smart dashes (the bane of programmers)
+defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
+defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
+
+# Disable automatic capitalization
+defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
+
+# Disable the "double space for period" shortcut
+defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
+
+# Disable the "Press and Hold" for accents (enables key repeat for gaming/coding)
+defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
+
+# Set a blazingly fast keyboard repeat rate
+defaults write NSGlobalDomain KeyRepeat -int 1
+defaults write NSGlobalDomain InitialKeyRepeat -int 10
+
+# Warning: This will disable the "Emoji & Symbols" picker and system-wide spellcheck. If you want a raw, "dumb" keyboard, add these:
+
+# Disable the Spelling/Typo daemon
+# launchctl disable user/$(id -u)/com.apple.AppleSpell
+
+# Disable the Text Input Menu agent (stops the floating input switchers)
+# launchctl disable user/$(id -u)/com.apple.TextInputMenuAgent
+# launchctl disable user/$(id -u)/com.apple.TextInputSwitcher
+
+
 echo "--- RESTARTING THE CORE ---"
 # This will make your screen flash black for a second—that's normal.
 killall Finder
