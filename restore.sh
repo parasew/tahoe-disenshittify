@@ -38,9 +38,48 @@ defaults write com.apple.dock mru-spaces -bool false
 echo "--- PHASE 4: Fix Screenshot Logic & Latency ---"
 # 14. Stop the 3-press lag by disabling the 'Screenshot Options' delay
 defaults write com.apple.screencapture show-thumbnail -bool false
+
 # 15. Force screenshots to go straight to a folder without 'processing' time
 mkdir -p ~/Desktop/Screenshots
 defaults write com.apple.screencapture location -string "~/Desktop/Screenshots"
+
+echo "--- PHASE 5: Disabling the 'Intelligence' Bloat (New for 2026) ---"
+# Kill the Apple Intelligence 'generative' daemons that index your data in background
+launchctl disable gui/$(id -u)/com.apple.generativeexperiencesd
+launchctl disable gui/$(id -u)/com.apple.intelligenceplatformd
+launchctl disable gui/$(id -u)/com.apple.intelligencecontextd
+
+echo "--- PHASE 6: Nuking Handoff & Universal Control (The Network Lag) ---"
+# Disable Handoff and Universal Clipboard (huge source of clipboard delays)
+defaults write ~/Library/Preferences/com.apple.coreservices.useractivityd.plist ClipboardSharingEnabled -bool false
+defaults write ~/Library/Preferences/com.apple.coreservices.useractivityd.plist SyncUserActivity -bool false
+
+# Disable Universal Control 'Magic Edges' (stops the cursor from sticking to screen edges)
+defaults write com.apple.universalcontrol Disable -bool true
+
+echo "--- PHASE 7: Disabling Spotlight Indexing (The CPU Hog) ---"
+echo "(you have to uncomment this feature if you really want this)"
+
+# Stop the background indexing (mds/mdutil) entirely
+# sudo mdutil -a -i off
+
+# Hide the Spotlight icon from the menu bar to reclaim space
+# defaults write com.apple.Spotlight "NSStatusItem Visible Item-0" -bool false
+
+echo "--- PHASE 8: Killing Update Nags & Notifications ---"
+# Disable the 'Updates Available' popup and background downloads
+sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled -bool false
+sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticDownload -bool false
+sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate CriticalUpdateInstall -bool false
+# Remove the 'Attention' badge from System Settings
+defaults write com.apple.systempreferences AttentionPrefBundleIDs 0
+
+echo "--- PHASE 9: Deep UI Cleaning ---"
+# Remove the 'Recent Applications' from the Dock
+defaults write com.apple.dock show-recents -bool false
+# Disable the 'Shake mouse pointer to locate' (annoying when coding)
+defaults write NSGlobalDomain NSTextPlacementSmartQuotesEnabled -bool false
+defaults write CGDisableCursorLocationMagnification -bool YES
 
 echo "--- RESTARTING THE CORE ---"
 # This will make your screen flash black for a second—that's normal.
